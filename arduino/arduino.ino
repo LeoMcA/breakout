@@ -3,6 +3,9 @@ void setup () {
 }
 
 void loop () {
-  int potentiometerValue = analogRead(A0);
-  Serial.println(potentiometerValue);
+  int value = analogRead(A0);
+  int asByte = value / 4;
+  if (!asByte) asByte++;
+  Serial.write(asByte);
+  delay(10);
 }
