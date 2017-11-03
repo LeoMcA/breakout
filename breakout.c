@@ -8,7 +8,7 @@ typedef struct xy {
   int y;
 } xy;
 
-int getIntFromSerial (int fd);
+int getPaddlePosition (int fd, int screenWidth, int paddleWidth);
 
 int main (void)
 {
@@ -25,11 +25,11 @@ int main (void)
   while (1)
   {
     getmaxyx(stdscr, max.y, max.x);
-    int paddle = getIntFromSerial(port);
+    int paddle = getPaddlePosition(port, max.x, 5);
 
     clear();
 
-    mvprintw(0, paddle, "x");
+    mvprintw(max.y - 1, paddle, "xxxxx");
     mvprintw(position.y, position.x, "o");
 
     refresh();
@@ -53,12 +53,12 @@ int main (void)
   return 0;
 }
 
-int getIntFromSerial (int fd)
+int getPaddlePosition (int fd, int screenWidth, int paddleWidth)
 {
   int b[1];
   while (!b[0])
   {
     read(fd, b, 1);
   }
-  return b[0] - 1;
+  return (b[0] - 1) * (screenWidth - paddleWidth) / 254;
 }
