@@ -20,17 +20,22 @@ int main (void)
   xy direction = { 1, 1 };
   xy max;
 
+  start_color();
+  init_pair(1, COLOR_WHITE, COLOR_WHITE);
+
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
     getmaxyx(stdscr, max.y, max.x);
-    int paddle = getPaddlePosition(port, max.x, 5);
+    int paddle = getPaddlePosition(port, max.x, 10);
 
     clear();
 
-    mvprintw(max.y - 1, paddle, "xxxxx");
+    attron(COLOR_PAIR(1));
+    mvprintw(max.y - 1, paddle, "##########");
     mvprintw(position.y, position.x, "o");
+    attroff(COLOR_PAIR(1));
 
     refresh();
 
