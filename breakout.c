@@ -8,39 +8,32 @@ typedef struct xy {
   int y;
 } xy;
 
-int getPaddlePosition (int fd, int screenWidth, int paddleWidth);
+void setup_color ();
+WINDOW *setup_border ();
+WINDOW *setup_window ();
+
+int paddle_pos (int fd, int window_width, int paddle_width);
 
 int main (void)
 {
   initscr();
   noecho();
-  curs_set(0);
+  curs_set(0); // disable cursor blinking
 
-  WINDOW *game_border;
-  game_border = newwin(46, 58, 0, 0);
-  box(game_border, 0, 0);
-  wrefresh(game_border);
-
-  WINDOW *game_window;
-  game_window = newwin(44, 56, 1, 1);
-  wattron(game_window, A_BOLD);
+  setup_color();
+  setup_border();
+  WINDOW *game_window = setup_window();
 
   xy position = { 0, 0 };
   xy direction = { 1, 1 };
   xy max;
-
-  start_color();
-  init_pair(1, COLOR_RED, COLOR_BLACK);
-  init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
-  init_pair(3, COLOR_GREEN, COLOR_BLACK);
-  init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
     getmaxyx(game_window, max.y, max.x);
-    int paddle = getPaddlePosition(port, max.x, 4);
+    int paddle = paddle_pos(port, max.x, 4);
 
     wclear(game_window);
 
@@ -79,12 +72,38 @@ int main (void)
   return 0;
 }
 
-int getPaddlePosition (int fd, int screenWidth, int paddleWidth)
+void setup_color ()
+{
+  start_color();
+  init_pair(1, COLOR_RED, COLOR_BLACK);
+  init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+}
+
+WINDOW *setup_border ()
+{
+  WINDOW *game_border;
+  game_border = newwin(46, 58, 0, 0);
+  box(game_border, 0, 0);
+  wrefresh(game_border);
+  return game_border;
+}
+
+WINDOW *setup_window ()
+{
+  WINDOW *game_window;
+  game_window = newwin(44, 56, 1, 1);
+  wattron(game_window, A_BOLD);
+  return game_window;
+}
+
+int paddle_pos (int fd, int window_width, int paddle_width)
 {
   int b[1];
   while (!b[0])
   {
     read(fd, b, 1);
   }
-  return (b[0] - 1) * (screenWidth - paddleWidth) / 254;
+  return (b[0] - 1) * (window_width - paddle_width) / 254;
 }
