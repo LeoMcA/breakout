@@ -15,27 +15,40 @@ int main (void)
   initscr();
   noecho();
   curs_set(0);
+  attron(A_BOLD);
 
   xy position = { 0, 0 };
   xy direction = { 1, 1 };
   xy max;
 
   start_color();
-  init_pair(1, COLOR_WHITE, COLOR_WHITE);
+  init_pair(1, COLOR_RED, COLOR_BLACK);
+  init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
     getmaxyx(stdscr, max.y, max.x);
-    int paddle = getPaddlePosition(port, max.x, 10);
+    int paddle = getPaddlePosition(port, max.x, 4);
 
     clear();
 
-    attron(COLOR_PAIR(1));
-    mvprintw(max.y - 1, paddle, "##########");
+    mvprintw(max.y - 1, paddle, "====");
     mvprintw(position.y, position.x, "o");
-    attroff(COLOR_PAIR(1));
+
+    for (int row = 0; row < 8; row++)
+    {
+      for (int col = 0; col < 14; col++)
+      {
+        int color = (row + 2) / 2;
+        attron(COLOR_PAIR(color));
+        mvprintw(row, 4 * col, "[__]");
+        attroff(COLOR_PAIR(color));
+      }
+    }
 
     refresh();
 
