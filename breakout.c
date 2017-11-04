@@ -15,7 +15,15 @@ int main (void)
   initscr();
   noecho();
   curs_set(0);
-  attron(A_BOLD);
+
+  WINDOW *game_border;
+  game_border = newwin(46, 58, 0, 0);
+  box(game_border, 0, 0);
+  wrefresh(game_border);
+
+  WINDOW *game_window;
+  game_window = newwin(44, 56, 1, 1);
+  wattron(game_window, A_BOLD);
 
   xy position = { 0, 0 };
   xy direction = { 1, 1 };
@@ -31,26 +39,26 @@ int main (void)
 
   while (1)
   {
-    getmaxyx(stdscr, max.y, max.x);
+    getmaxyx(game_window, max.y, max.x);
     int paddle = getPaddlePosition(port, max.x, 4);
 
-    clear();
+    wclear(game_window);
 
-    mvprintw(max.y - 1, paddle, "====");
-    mvprintw(position.y, position.x, "o");
+    mvwprintw(game_window, max.y - 5, paddle, "====");
+    mvwprintw(game_window, position.y, position.x, "o");
 
     for (int row = 0; row < 8; row++)
     {
       for (int col = 0; col < 14; col++)
       {
         int color = (row + 2) / 2;
-        attron(COLOR_PAIR(color));
-        mvprintw(row, 4 * col, "[__]");
-        attroff(COLOR_PAIR(color));
+        wattron(game_window, COLOR_PAIR(color));
+        mvwprintw(game_window, 4 + row, 4 * col, "[__]");
+        wattroff(game_window, COLOR_PAIR(color));
       }
     }
 
-    refresh();
+    wrefresh(game_window);
 
     position.x += direction.x;
     position.y += direction.y;
