@@ -14,6 +14,8 @@ WINDOW *setup_window ();
 
 int paddle_pos (int fd, int window_width, int paddle_width);
 
+void draw_bricks (WINDOW *game_window);
+
 int main (void)
 {
   initscr();
@@ -40,16 +42,7 @@ int main (void)
     mvwprintw(game_window, max.y - 5, paddle, "====");
     mvwprintw(game_window, position.y, position.x, "o");
 
-    for (int row = 0; row < 8; row++)
-    {
-      for (int col = 0; col < 14; col++)
-      {
-        int color = (row + 2) / 2;
-        wattron(game_window, COLOR_PAIR(color));
-        mvwprintw(game_window, 4 + row, 4 * col, "[__]");
-        wattroff(game_window, COLOR_PAIR(color));
-      }
-    }
+    draw_bricks(game_window);
 
     wrefresh(game_window);
 
@@ -106,4 +99,20 @@ int paddle_pos (int fd, int window_width, int paddle_width)
     read(fd, b, 1);
   }
   return (b[0] - 1) * (window_width - paddle_width) / 254;
+}
+
+int row_color;
+void draw_bricks (WINDOW *game_window)
+{
+  for (int row = 0; row < 8; row++)
+  {
+    // int row_color; // initializing variable here causes everything to break
+    row_color = (row + 2) / 2;
+    for (int col = 0; col < 14; col++)
+    {
+      wattron(game_window, COLOR_PAIR(row_color));
+      mvwprintw(game_window, 4 + row, 4 * col, "[__]");
+      wattroff(game_window, COLOR_PAIR(row_color));
+    }
+  }
 }
