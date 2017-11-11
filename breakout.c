@@ -12,9 +12,15 @@ typedef struct xy {
   int y;
 } xy;
 
+typedef struct xy_float {
+  float x;
+  float y;
+} xy_float;
+
 typedef struct ball {
-  xy position;
+  xy_float position;
   xy direction;
+  float speed;
 } ball;
 
 typedef struct paddle {
@@ -40,7 +46,7 @@ void update_paddle_position (int fd);
 WINDOW *border_window;
 WINDOW *game_window;
 xy screen_max = { 0, 0 };
-ball b = { .position = { 0, 0 }, .direction = { 1, 1 }};
+ball b = { .position = { 0, 0 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 
 int main (void)
@@ -147,8 +153,8 @@ void draw_paddle ()
 
 void move_ball ()
 {
-  b.position.x += b.direction.x;
-  b.position.y += b.direction.y;
+  b.position.x += b.direction.x * b.speed;
+  b.position.y += b.direction.y * b.speed;
 
   if (b.position.x >= X_MAX - 1 || b.position.x <= 0)
   {
