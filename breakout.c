@@ -159,17 +159,17 @@ void move_ball ()
   float x = b.position.x + b.direction.x * b.speed;
   float y = b.position.y + b.direction.y * b.speed;
 
-  if (round(x) == X_MAX || round(x) == -1)
+  if (x > X_MAX - 1 || x < 0)
   {
     x = bounce_x();
   }
 
-  if (round(y) == Y_MAX || round(y) == -1)
+  if (y > Y_MAX - 1 || y < 0)
   {
     y = bounce_y();
   }
 
-  if (round(x) >= p.position.x && round(x) <= p.position.x + p.width && round(y) == p.position.y)
+  if (x > p.position.x - 1 && x < p.position.x + p.width && ceil(y) == p.position.y)
   {
     y = bounce_y();
   }
