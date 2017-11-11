@@ -23,8 +23,10 @@ typedef struct paddle {
 } paddle;
 
 void setup_color ();
-WINDOW *setup_border ();
-WINDOW *setup_game ();
+void create_border_window (int x, int y);
+void create_game_window (int x, int y);
+
+void center_windows();
 
 void draw_bricks ();
 void draw_ball ();
@@ -34,24 +36,28 @@ void move_ball ();
 
 void update_paddle_position (int fd);
 
+WINDOW *border_window;
 WINDOW *game_window;
+xy screen_max = { 0, 0 };
 ball b = { .position = { 0, 0 }, .direction = { 1, 1 }};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 
 int main (void)
 {
-  initscr();
+  initscr(); // creates strscr variable
   noecho();
   curs_set(0); // disable cursor blinking
 
   setup_color();
-  setup_border();
-  game_window = setup_game();
+  create_border_window(1, 1);
+  create_game_window(1, 1);
 
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
+    center_windows();
+
     wclear(game_window);
 
     update_paddle_position(port);
@@ -80,21 +86,36 @@ void setup_color ()
   init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 }
 
-WINDOW *setup_border ()
+void create_border_window (int x, int y)
 {
-  WINDOW *game_border;
-  game_border = newwin(Y_MAX + 2, X_MAX + 2, 0, 0);
-  box(game_border, 0, 0);
-  wrefresh(game_border);
-  return game_border;
+  border_window = newwin(Y_MAX + 2, X_MAX + 2, y - 1, x - 1);
+  box(border_window, 0, 0);
+  wrefresh(border_window);
 }
 
-WINDOW *setup_game ()
+void create_game_window (int x, int y)
 {
-  WINDOW *game_window;
-  game_window = newwin(Y_MAX, X_MAX, 1, 1);
+  game_window = newwin(Y_MAX, X_MAX, y, x);
   wattron(game_window, A_BOLD);
-  return game_window;
+}
+
+void center_windows ()
+{
+  int max_x, max_y;
+  getmaxyx(stdscr, max_y, max_x);
+  if (max_x != screen_max.x || max_y != screen_max.y)
+  {
+    screen_max.x = max_x;
+    screen_max.y = max_y;
+    int x = (screen_max.x - X_MAX) / 2;
+    int y = (screen_max.y - Y_MAX) / 2;
+    delwin(border_window);
+    delwin(game_window);
+    clear();
+    refresh();
+    create_border_window(x, y);
+    create_game_window(x, y);
+  }
 }
 
 int row_color;
