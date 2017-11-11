@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <unistd.h>
+#include <math.h>
 #include "arduino-serial/arduino-serial-lib.h"
 
 #define DEBUG 1
@@ -143,7 +144,7 @@ void draw_bricks ()
 
 void draw_ball ()
 {
-  mvwprintw(game_window, b.position.y, b.position.x, "o");
+  mvwprintw(game_window, round(b.position.y), round(b.position.x), "o");
 }
 
 void draw_paddle ()
@@ -153,17 +154,27 @@ void draw_paddle ()
 
 void move_ball ()
 {
-  b.position.x += b.direction.x * b.speed;
-  b.position.y += b.direction.y * b.speed;
+  float x = b.position.x + b.direction.x * b.speed;
+  float y = b.position.y + b.direction.y * b.speed;
 
-  if (b.position.x >= X_MAX - 1 || b.position.x <= 0)
+  if (round(x) == X_MAX || round(x) == -1)
   {
     b.direction.x *= -1;
+    b.position.x += b.direction.x * b.speed;
+  }
+  else
+  {
+    b.position.x = x;
   }
 
-  if (b.position.y >= Y_MAX - 1 || b.position.y <= 0)
+  if (round(y) == Y_MAX || round(y) == -1)
   {
     b.direction.y *= -1;
+    b.position.y += b.direction.y * b.speed;
+  }
+  else
+  {
+    b.position.y = y;
   }
 }
 
