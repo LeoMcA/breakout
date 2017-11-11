@@ -41,6 +41,8 @@ void draw_ball ();
 void draw_paddle ();
 
 void move_ball ();
+float bounce_x ();
+float bounce_y ();
 
 void update_paddle_position (int fd);
 
@@ -159,23 +161,33 @@ void move_ball ()
 
   if (round(x) == X_MAX || round(x) == -1)
   {
-    b.direction.x *= -1;
-    b.position.x += b.direction.x * b.speed;
-  }
-  else
-  {
-    b.position.x = x;
+    x = bounce_x();
   }
 
   if (round(y) == Y_MAX || round(y) == -1)
   {
-    b.direction.y *= -1;
-    b.position.y += b.direction.y * b.speed;
+    y = bounce_y();
   }
-  else
+
+  if (round(x) >= p.position.x && round(x) <= p.position.x + p.width && round(y) == p.position.y)
   {
-    b.position.y = y;
+    y = bounce_y();
   }
+
+  b.position.x = x;
+  b.position.y = y;
+}
+
+float bounce_x ()
+{
+  b.direction.x *= -1;
+  return b.position.x + b.direction.x * b.speed;
+}
+
+float bounce_y ()
+{
+  b.direction.y *= -1;
+  return b.position.y + b.direction.y * b.speed;
 }
 
 void update_paddle_position (int fd)
