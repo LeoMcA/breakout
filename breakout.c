@@ -3,18 +3,32 @@
 #include <unistd.h>
 #include "arduino-serial/arduino-serial-lib.h"
 
+#define DEBUG 1
+#define X_MAX 56
+#define Y_MAX 44
+
 typedef struct xy {
   int x;
   int y;
 } xy;
 
+typedef struct ball {
+  xy position;
+  xy direction;
+} ball;
+
 void setup_color ();
 WINDOW *setup_border ();
-WINDOW *setup_window ();
-
-int paddle_pos (int fd, int window_width, int paddle_width);
+WINDOW *setup_game ();
 
 void draw_bricks (WINDOW *game_window);
+
+void move_ball ();
+
+int paddle_pos (int fd, int paddle_width);
+
+WINDOW *game_window;
+ball b = { .position = { 0, 0 }, .direction = { 1, 1 }};
 
 int main (void)
 {
@@ -24,40 +38,24 @@ int main (void)
 
   setup_color();
   setup_border();
-  WINDOW *game_window = setup_window();
-
-  xy position = { 0, 0 };
-  xy direction = { 1, 1 };
-  xy max;
+  game_window = setup_game();
 
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
-    getmaxyx(game_window, max.y, max.x);
-    int paddle = paddle_pos(port, max.x, 4);
-
     wclear(game_window);
 
-    mvwprintw(game_window, max.y - 5, paddle, "====");
-    mvwprintw(game_window, position.y, position.x, "o");
+    int paddle = paddle_pos(port, 4);
+
+    mvwprintw(game_window, Y_MAX - 5, paddle, "====");
+    mvwprintw(game_window, b.position.y, b.position.x, "o");
+
+    move_ball();
 
     draw_bricks(game_window);
 
     wrefresh(game_window);
-
-    position.x += direction.x;
-    position.y += direction.y;
-
-    if (position.x >= max.x - 1 || position.x <= 0)
-    {
-      direction.x *= -1;
-    }
-
-    if (position.y >= max.y - 1 || position.y <= 0)
-    {
-      direction.y *= -1;
-    }
   }
 
   endwin();
@@ -77,28 +75,18 @@ void setup_color ()
 WINDOW *setup_border ()
 {
   WINDOW *game_border;
-  game_border = newwin(46, 58, 0, 0);
+  game_border = newwin(Y_MAX + 2, X_MAX + 2, 0, 0);
   box(game_border, 0, 0);
   wrefresh(game_border);
   return game_border;
 }
 
-WINDOW *setup_window ()
+WINDOW *setup_game ()
 {
   WINDOW *game_window;
-  game_window = newwin(44, 56, 1, 1);
+  game_window = newwin(Y_MAX, X_MAX, 1, 1);
   wattron(game_window, A_BOLD);
   return game_window;
-}
-
-int paddle_pos (int fd, int window_width, int paddle_width)
-{
-  int b[1];
-  while (!b[0])
-  {
-    read(fd, b, 1);
-  }
-  return (b[0] - 1) * (window_width - paddle_width) / 254;
 }
 
 int row_color;
@@ -115,4 +103,32 @@ void draw_bricks (WINDOW *game_window)
       wattroff(game_window, COLOR_PAIR(row_color));
     }
   }
+}
+
+void move_ball ()
+{
+  b.position.x += b.direction.x;
+  b.position.y += b.direction.y;
+
+  if (b.position.x >= X_MAX - 1 || b.position.x <= 0)
+  {
+    b.direction.x *= -1;
+  }
+
+  if (b.position.y >= Y_MAX - 1 || b.position.y <= 0)
+  {
+    b.direction.y *= -1;
+  }
+}
+
+int paddle_pos (int fd, int paddle_width)
+{
+  int b[1];
+  while (!b[0])
+  {
+    read(fd, b, 1);
+  }
+  int position = (b[0] - 1) * (X_MAX - paddle_width) / 254;
+  if (DEBUG) mvwprintw(game_window, 0, 0, "paddle position: %d", position);
+  return position;
 }
