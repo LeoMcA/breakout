@@ -41,8 +41,8 @@ void draw_ball ();
 void draw_paddle ();
 
 void move_ball ();
-float calc_x ();
-float calc_y ();
+float calc_ball_x ();
+float calc_ball_y ();
 
 void update_paddle_position (int fd);
 
@@ -51,6 +51,7 @@ WINDOW *game_window;
 xy screen_max = { 0, 0 };
 ball b = { .position = { 0, 0 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
+bool bricks[14][8] = { [0 ... 13][0 ... 7] = true };
 
 float rel;
 
@@ -143,9 +144,12 @@ void draw_bricks ()
     row_color = (row + 2) / 2;
     for (int col = 0; col < 14; col++)
     {
-      wattron(game_window, COLOR_PAIR(row_color));
-      mvwprintw(game_window, 4 + row, 4 * col, "[__]");
-      wattroff(game_window, COLOR_PAIR(row_color));
+      if (bricks[col][row])
+      {
+        wattron(game_window, COLOR_PAIR(row_color));
+        mvwprintw(game_window, 4 + row, 4 * col, "[__]");
+        wattroff(game_window, COLOR_PAIR(row_color));
+      }
     }
   }
 }
@@ -161,23 +165,25 @@ void draw_paddle ()
 }
 
 float angle; // TODO: why do I have to put these up here to make things not break?
+int col;
+int row;
 void move_ball ()
 {
-  float x = calc_x();
-  float y = calc_y();
+  float x = calc_ball_x();
+  float y = calc_ball_y();
 
   if (x > X_MAX - 1 || x < 0)
   {
     // collision with vertical walls
     b.direction.x *= -1;
-    x = calc_x();
+    x = calc_ball_x();
   }
 
   if (y > Y_MAX - 1 || y < 0)
   {
     // collision with horizontal walls
     b.direction.y *= -1;
-    y = calc_y();
+    y = calc_ball_y();
   }
 
   if (x > p.position.x - 1 && x < p.position.x + p.width && ceil(y) == p.position.y)
@@ -187,20 +193,34 @@ void move_ball ()
     angle = -1 * M_PI * (2 + 18 * rel) / 20;
     b.direction.x = cosf(angle);
     b.direction.y = sinf(angle);
-    x = calc_x();
-    y = calc_y();
+    x = calc_ball_x();
+    y = calc_ball_y();
+  }
+
+  if (round(y) >= 4 && round(y) <= 12)
+  {
+    // potential collision with brick
+    col = round(x) / 4;
+    row = round(y) - 4;
+    if (bricks[col][row])
+    {
+      // collision with brick
+      bricks[col][row] = false;
+      b.direction.y *= -1;
+      y = calc_ball_y();
+    }
   }
 
   b.position.x = x;
   b.position.y = y;
 }
 
-float calc_x ()
+float calc_ball_x ()
 {
   return b.position.x + b.direction.x * b.speed;
 }
 
-float calc_y ()
+float calc_ball_y ()
 {
   return b.position.y + b.direction.y * b.speed;
 }
