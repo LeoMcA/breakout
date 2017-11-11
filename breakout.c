@@ -49,7 +49,7 @@ void update_paddle_position (int fd);
 WINDOW *border_window;
 WINDOW *game_window;
 xy screen_max = { 0, 0 };
-ball b = { .position = { 0, 0 }, .direction = { 1, 1 }, .speed = 0.1};
+ball b = { .position = { X_MAX / 2, Y_MAX / 2 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 bool bricks[14][8] = { [0 ... 13][0 ... 7] = true };
 
@@ -201,7 +201,7 @@ void move_ball ()
   {
     // potential collision with brick
     col = round(x) / 4;
-    row = round(y) - 4;
+    row = round(y) - 5;
     if (bricks[col][row])
     {
       // collision with brick
