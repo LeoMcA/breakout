@@ -20,7 +20,7 @@ typedef struct xy_float {
 
 typedef struct ball {
   xy_float position;
-  xy direction;
+  xy_float direction;
   float speed;
 } ball;
 
@@ -41,8 +41,8 @@ void draw_ball ();
 void draw_paddle ();
 
 void move_ball ();
-float bounce_x ();
-float bounce_y ();
+float calc_x ();
+float calc_y ();
 
 void update_paddle_position (int fd);
 
@@ -51,6 +51,8 @@ WINDOW *game_window;
 xy screen_max = { 0, 0 };
 ball b = { .position = { 0, 0 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
+
+float rel;
 
 int main (void)
 {
@@ -125,6 +127,10 @@ void draw_game_window(int port)
   draw_ball();
   draw_paddle();
 
+  if (DEBUG) {
+    mvwprintw(game_window, 1, 0, "paddle ball rel: %f", rel);
+  }
+
   wrefresh(game_window);
 }
 
@@ -154,39 +160,48 @@ void draw_paddle ()
   mvwprintw(game_window, p.position.y, p.position.x, "====");
 }
 
+float angle; // TODO: why do I have to put these up here to make things not break?
 void move_ball ()
 {
-  float x = b.position.x + b.direction.x * b.speed;
-  float y = b.position.y + b.direction.y * b.speed;
+  float x = calc_x();
+  float y = calc_y();
 
   if (x > X_MAX - 1 || x < 0)
   {
-    x = bounce_x();
+    // collision with vertical walls
+    b.direction.x *= -1;
+    x = calc_x();
   }
 
   if (y > Y_MAX - 1 || y < 0)
   {
-    y = bounce_y();
+    // collision with horizontal walls
+    b.direction.y *= -1;
+    y = calc_y();
   }
 
   if (x > p.position.x - 1 && x < p.position.x + p.width && ceil(y) == p.position.y)
   {
-    y = bounce_y();
+    // collision with paddle
+    rel = (x - p.position.x + 1) / (p.width + 1);
+    angle = -1 * M_PI * (2 + 18 * rel) / 20;
+    b.direction.x = cosf(angle);
+    b.direction.y = sinf(angle);
+    x = calc_x();
+    y = calc_y();
   }
 
   b.position.x = x;
   b.position.y = y;
 }
 
-float bounce_x ()
+float calc_x ()
 {
-  b.direction.x *= -1;
   return b.position.x + b.direction.x * b.speed;
 }
 
-float bounce_y ()
+float calc_y ()
 {
-  b.direction.y *= -1;
   return b.position.y + b.direction.y * b.speed;
 }
 
