@@ -17,18 +17,26 @@ typedef struct ball {
   xy direction;
 } ball;
 
+typedef struct paddle {
+  xy position;
+  int width;
+} paddle;
+
 void setup_color ();
 WINDOW *setup_border ();
 WINDOW *setup_game ();
 
-void draw_bricks (WINDOW *game_window);
+void draw_bricks ();
+void draw_ball ();
+void draw_paddle ();
 
 void move_ball ();
 
-int paddle_pos (int fd, int paddle_width);
+void update_paddle_position (int fd);
 
 WINDOW *game_window;
 ball b = { .position = { 0, 0 }, .direction = { 1, 1 }};
+paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 
 int main (void)
 {
@@ -46,14 +54,14 @@ int main (void)
   {
     wclear(game_window);
 
-    int paddle = paddle_pos(port, 4);
+    update_paddle_position(port);
 
-    mvwprintw(game_window, Y_MAX - 5, paddle, "====");
-    mvwprintw(game_window, b.position.y, b.position.x, "o");
+    draw_paddle();
+    draw_ball();
 
     move_ball();
 
-    draw_bricks(game_window);
+    draw_bricks();
 
     wrefresh(game_window);
   }
@@ -90,7 +98,7 @@ WINDOW *setup_game ()
 }
 
 int row_color;
-void draw_bricks (WINDOW *game_window)
+void draw_bricks ()
 {
   for (int row = 0; row < 8; row++)
   {
@@ -103,6 +111,16 @@ void draw_bricks (WINDOW *game_window)
       wattroff(game_window, COLOR_PAIR(row_color));
     }
   }
+}
+
+void draw_ball ()
+{
+  mvwprintw(game_window, b.position.y, b.position.x, "o");
+}
+
+void draw_paddle ()
+{
+  mvwprintw(game_window, p.position.y, p.position.x, "====");
 }
 
 void move_ball ()
@@ -121,14 +139,14 @@ void move_ball ()
   }
 }
 
-int paddle_pos (int fd, int paddle_width)
+void update_paddle_position (int fd)
 {
   int b[1];
   while (!b[0])
   {
     read(fd, b, 1);
   }
-  int position = (b[0] - 1) * (X_MAX - paddle_width) / 254;
+  int position = (b[0] - 1) * (X_MAX - p.width) / 254;
   if (DEBUG) mvwprintw(game_window, 0, 0, "paddle position: %d", position);
-  return position;
+  p.position.x = position;
 }
