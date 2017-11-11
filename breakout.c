@@ -27,6 +27,7 @@ void create_border_window (int x, int y);
 void create_game_window (int x, int y);
 
 void center_windows();
+void draw_game_window();
 
 void draw_bricks ();
 void draw_ball ();
@@ -49,27 +50,13 @@ int main (void)
   curs_set(0); // disable cursor blinking
 
   setup_color();
-  create_border_window(1, 1);
-  create_game_window(1, 1);
 
   int port = serialport_init("/dev/ttyACM0", 9600);
 
   while (1)
   {
     center_windows();
-
-    wclear(game_window);
-
-    update_paddle_position(port);
-
-    draw_paddle();
-    draw_ball();
-
-    move_ball();
-
-    draw_bricks();
-
-    wrefresh(game_window);
+    draw_game_window(port);
   }
 
   endwin();
@@ -116,6 +103,20 @@ void center_windows ()
     create_border_window(x, y);
     create_game_window(x, y);
   }
+}
+
+void draw_game_window(int port)
+{
+  wclear(game_window);
+
+  move_ball();
+  update_paddle_position(port);
+
+  draw_bricks();
+  draw_ball();
+  draw_paddle();
+
+  wrefresh(game_window);
 }
 
 int row_color;
