@@ -34,7 +34,8 @@ The game also requires the [ncurses library][1] to be installed.
 
 In the project root, compile the game with:
 
-`gcc arduino/display/breakout.c arduino/display/arduino-serial/arduino-serial-lib.c -lncurses -lm -o breakout`
+`gcc arduino/display/breakout.c arduino/display/arduino-serial/arduino-serial-lib.c \
+-lncurses -lm -o breakout`
 
 And run it with:
 
