@@ -35,6 +35,7 @@ void create_border_window (int x, int y);
 void create_game_window (int x, int y);
 
 void draw_game_window ();
+void draw_scores ();
 void draw_bricks ();
 void draw_ball ();
 void draw_paddle ();
@@ -138,14 +139,18 @@ void draw_game_window (int port)
   move_ball();
   update_paddle_position(port);
 
+  draw_scores();
   draw_bricks();
   draw_ball();
   draw_paddle();
 
+  wrefresh(game_window);
+}
+
+void draw_scores ()
+{
   mvwprintw(game_window, 0, 0, "points: %d", points);
   mvwprintw(game_window, 1, 0, "lives: %d", lives);
-
-  wrefresh(game_window);
 }
 
 void draw_bricks ()
