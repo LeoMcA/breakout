@@ -4,8 +4,8 @@ void setup () {
 
 void loop () {
   int value = analogRead(A0);
-  int asByte = value / 4;
-  if (!asByte) asByte++;
-  Serial.write(asByte);
+  int byte = value / 4;
+  if (!byte) byte++; // don't send 0's
+  Serial.write(byte);
   delay(10);
 }
