@@ -57,6 +57,7 @@ int destroyed_bricks = 0;
 bool hit_third_row = false;
 bool hit_fourth_row = false;
 int points = 0;
+int lives = 3;
 
 float rel;
 
@@ -134,6 +135,7 @@ void draw_game_window(int port)
   draw_paddle();
 
   mvwprintw(game_window, 0, 0, "points: %d", points);
+  mvwprintw(game_window, 1, 0, "lives: %d", lives);
 
   if (DEBUG) {
     mvwprintw(game_window, 1, 0, "paddle ball rel: %f", rel);
@@ -186,11 +188,22 @@ void move_ball ()
     x = calc_ball_x();
   }
 
-  if (y > Y_MAX - 1 || y < 0)
+  if (y < 0)
   {
-    // collision with horizontal walls
+    // collision with top wall
     b.direction.y *= -1;
     y = calc_ball_y();
+  }
+
+  if (y > Y_MAX - 1)
+  {
+    // collision with bottom wall
+    x = X_MAX / 2;
+    y = Y_MAX / 2;
+    if (--lives < 1)
+    {
+      b.speed = 0;
+    }
   }
 
   if (x > p.position.x - 1 && x < p.position.x + p.width && ceil(y) == p.position.y)
