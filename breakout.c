@@ -43,6 +43,7 @@ void draw_paddle ();
 void move_ball ();
 float calc_ball_x ();
 float calc_ball_y ();
+void ball_speedup(int i);
 
 void update_paddle_position (int fd);
 
@@ -52,6 +53,9 @@ xy screen_max = { 0, 0 };
 ball b = { .position = { X_MAX / 2, Y_MAX / 2 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 bool bricks[14][8] = { [0 ... 13][0 ... 7] = true };
+int destroyed_bricks = 0;
+bool hit_third_row = false;
+bool hit_fourth_row = false;
 int points = 0;
 
 float rel;
@@ -214,10 +218,12 @@ void move_ball ()
         case 0:
         case 1:
           points += 7;
+          ball_speedup(400);
           break;
         case 2:
         case 3:
           points += 5;
+          ball_speedup(300);
           break;
         case 4:
         case 5:
@@ -226,6 +232,7 @@ void move_ball ()
         default:
           points++;
       }
+      ball_speedup(++destroyed_bricks);
       b.direction.y *= -1;
       y = calc_ball_y();
     }
@@ -243,6 +250,32 @@ float calc_ball_x ()
 float calc_ball_y ()
 {
   return b.position.y + b.direction.y * b.speed;
+}
+
+void ball_speedup (int i)
+{
+  switch (i)
+  {
+    case 4:
+      b.speed = 0.2;
+      break;
+    case 12:
+      b.speed = 0.3;
+      break;
+    case 300:
+      if (!hit_third_row)
+      {
+        hit_third_row = true;
+        b.speed = 0.4;
+      }
+      break;
+    case 400:
+      if (!hit_fourth_row)
+      {
+        hit_fourth_row = true;
+        b.speed = 0.5;
+      }
+  }
 }
 
 void update_paddle_position (int fd)
