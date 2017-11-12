@@ -136,8 +136,8 @@ void draw_game_window (int port)
 {
   wclear(game_window);
 
-  move_ball();
   update_paddle_position(port);
+  move_ball();
 
   draw_scores();
   draw_bricks();
