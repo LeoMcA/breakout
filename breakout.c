@@ -4,7 +4,6 @@
 #include <math.h>
 #include "arduino-serial/arduino-serial-lib.h"
 
-#define DEBUG 0
 #define X_MAX 56
 #define Y_MAX 44
 
@@ -136,10 +135,6 @@ void draw_game_window(int port)
 
   mvwprintw(game_window, 0, 0, "points: %d", points);
   mvwprintw(game_window, 1, 0, "lives: %d", lives);
-
-  if (DEBUG) {
-    mvwprintw(game_window, 1, 0, "paddle ball rel: %f", rel);
-  }
 
   wrefresh(game_window);
 }
@@ -303,6 +298,5 @@ void update_paddle_position (int fd)
     read(fd, b, 1);
   }
   int position = (b[0] - 1) * (X_MAX - p.width) / 254;
-  if (DEBUG) mvwprintw(game_window, 0, 0, "paddle position: %d", position);
   p.position.x = position;
 }
