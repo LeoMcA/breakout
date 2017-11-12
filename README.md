@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=FtQ3F7vpyic
 
 ## Arduino setup
 
-The Ardiuno must be plugged into the computer, and the application in `arduino/` uploaded to it, using the Ardiuno IDE.
+The Ardiuno must be plugged into the computer, and the application in `arduino/arduino/arduino.ino` uploaded to it, using the Ardiuno IDE.
 
 This application sends the current value of the potentiometer to the computer it's connected to every 10ms.
 
@@ -22,19 +22,19 @@ In practice I put the potentiometer directly on the breakout board, to serve as 
 
 But any method of connecting the potentiometer to the A0 input, using the 5V supply, will work:
 
-![Circuit Diagram](https://raw.githubusercontent.com/LeoMcA/breakout/master/docs/circuit%20diagram.png)
+![Circuit Diagram](https://raw.githubusercontent.com/LeoMcA/breakout/master/documentation/circuit%20diagram.png)
 
 ## Game setup
 
 Ensure the game is configured to connect to the correct serial port, by checking what port the Ardiuno is connected to in the Ardiuno IDE.
 
-If it isn't `/dev/ttyACM0`, open `breakout.c` and update the `SERIAL_PORT` definition to the correct value.
+If it isn't `/dev/ttyACM0`, open `arduino/display/breakout.c` and update the `SERIAL_PORT` definition to the correct value.
 
 The game also requires the [ncurses library][1] to be installed.
 
-Compile the game with:
+In the project root, compile the game with:
 
-`gcc breakout.c arduino-serial/arduino-serial-lib.c -lncurses -lm -o breakout`
+`gcc arduino/display/breakout.c arduino/display/arduino-serial/arduino-serial-lib.c -lncurses -lm -o breakout`
 
 And run it with:
 
