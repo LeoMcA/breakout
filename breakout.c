@@ -29,12 +29,12 @@ typedef struct paddle {
 } paddle;
 
 void setup_color ();
+void center_windows ();
+
 void create_border_window (int x, int y);
 void create_game_window (int x, int y);
 
-void center_windows();
-void draw_game_window();
-
+void draw_game_window ();
 void draw_bricks ();
 void draw_ball ();
 void draw_paddle ();
@@ -49,16 +49,25 @@ void update_paddle_position (int fd);
 WINDOW *border_window;
 WINDOW *game_window;
 xy screen_max = { 0, 0 };
-ball b = { .position = { X_MAX / 2, Y_MAX / 2 }, .direction = { 1, 1 }, .speed = 0.1};
-paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
+
+ball b = {
+  .position = { X_MAX / 2, Y_MAX / 2 },
+  .direction = { 1, 1 },
+  .speed = 0.1
+};
+
+paddle p = {
+  .position = { 0, Y_MAX - 5 },
+  .width = 4
+};
+
 bool bricks[14][8] = { [0 ... 13][0 ... 7] = true };
 int destroyed_bricks = 0;
 bool hit_third_row = false;
 bool hit_fourth_row = false;
+
 int points = 0;
 int lives = 3;
-
-float rel;
 
 int main (void)
 {
@@ -90,19 +99,6 @@ void setup_color ()
   init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 }
 
-void create_border_window (int x, int y)
-{
-  border_window = newwin(Y_MAX + 2, X_MAX + 2, y - 1, x - 1);
-  box(border_window, 0, 0);
-  wrefresh(border_window);
-}
-
-void create_game_window (int x, int y)
-{
-  game_window = newwin(Y_MAX, X_MAX, y, x);
-  wattron(game_window, A_BOLD);
-}
-
 void center_windows ()
 {
   int max_x, max_y;
@@ -122,7 +118,20 @@ void center_windows ()
   }
 }
 
-void draw_game_window(int port)
+void create_border_window (int x, int y)
+{
+  border_window = newwin(Y_MAX + 2, X_MAX + 2, y - 1, x - 1);
+  box(border_window, 0, 0);
+  wrefresh(border_window);
+}
+
+void create_game_window (int x, int y)
+{
+  game_window = newwin(Y_MAX, X_MAX, y, x);
+  wattron(game_window, A_BOLD);
+}
+
+void draw_game_window (int port)
 {
   wclear(game_window);
 
@@ -166,6 +175,7 @@ void draw_paddle ()
   mvwprintw(game_window, p.position.y, p.position.x, "%.*s", p.width, "====");
 }
 
+float rel;
 float angle; // TODO: why do I have to put these up here to make things not break?
 int col;
 int row;
