@@ -4,6 +4,12 @@
 
 ***Warning:*** **the game flickers quite a bit, as ncurses isn't quite suited to this kind of high-framerate use. If this is likely to bother you (such as if you have epilepsy), don't play it.**
 
+## Demo Video
+
+[![YouTube video](http://img.youtube.com/vi/FtQ3F7vpyic/0.jpg)](https://www.youtube.com/embed/FtQ3F7vpyic?rel=0&amp;showinfo=0)
+
+https://www.youtube.com/watch?v=FtQ3F7vpyic
+
 ## Arduino setup
 
 The Ardiuno must be plugged into the computer, and the application in `arduino/` uploaded to it, using the Ardiuno IDE.
