@@ -42,7 +42,7 @@ void draw_paddle ();
 void move_ball ();
 float calc_ball_x ();
 float calc_ball_y ();
-void ball_speedup(int i);
+void speedup_ball (int i);
 
 void update_paddle_position (int fd);
 
@@ -228,12 +228,12 @@ void move_ball ()
         case 0:
         case 1:
           points += 7;
-          ball_speedup(400);
+          speedup_ball(400);
           break;
         case 2:
         case 3:
           points += 5;
-          ball_speedup(300);
+          speedup_ball(300);
           break;
         case 4:
         case 5:
@@ -242,7 +242,7 @@ void move_ball ()
         default:
           points++;
       }
-      ball_speedup(++destroyed_bricks);
+      speedup_ball(++destroyed_bricks);
       b.direction.y *= -1;
       y = calc_ball_y();
     }
@@ -262,7 +262,7 @@ float calc_ball_y ()
   return b.position.y + b.direction.y * b.speed;
 }
 
-void ball_speedup (int i)
+void speedup_ball (int i)
 {
   switch (i)
   {
