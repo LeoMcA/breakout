@@ -69,6 +69,7 @@ bool hit_fourth_row = false;
 
 int points = 0;
 int lives = 3;
+int new_ball_delay = 0;
 
 int main (void)
 {
@@ -182,6 +183,8 @@ void draw_paddle ()
 
 void move_ball ()
 {
+  if (++new_ball_delay < 100) return;
+
   float x = calc_ball_x();
   float y = calc_ball_y();
 
@@ -206,6 +209,7 @@ void move_ball ()
   if (y > Y_MAX - 1)
   {
     // collision with bottom wall
+    new_ball_delay = 0;
     x = X_MAX / 2;
     y = Y_MAX / 2;
     if (--lives < 1)
