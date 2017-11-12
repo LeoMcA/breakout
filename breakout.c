@@ -4,7 +4,7 @@
 #include <math.h>
 #include "arduino-serial/arduino-serial-lib.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define X_MAX 56
 #define Y_MAX 44
 
@@ -52,6 +52,7 @@ xy screen_max = { 0, 0 };
 ball b = { .position = { X_MAX / 2, Y_MAX / 2 }, .direction = { 1, 1 }, .speed = 0.1};
 paddle p = { .position = { 0, Y_MAX - 5 }, .width = 4 };
 bool bricks[14][8] = { [0 ... 13][0 ... 7] = true };
+int points = 0;
 
 float rel;
 
@@ -127,6 +128,8 @@ void draw_game_window(int port)
   draw_bricks();
   draw_ball();
   draw_paddle();
+
+  mvwprintw(game_window, 0, 0, "points: %d", points);
 
   if (DEBUG) {
     mvwprintw(game_window, 1, 0, "paddle ball rel: %f", rel);
@@ -206,6 +209,23 @@ void move_ball ()
     {
       // collision with brick
       bricks[col][row] = false;
+      switch (row)
+      {
+        case 0:
+        case 1:
+          points += 7;
+          break;
+        case 2:
+        case 3:
+          points += 5;
+          break;
+        case 4:
+        case 5:
+          points += 3;
+          break;
+        default:
+          points++;
+      }
       b.direction.y *= -1;
       y = calc_ball_y();
     }
