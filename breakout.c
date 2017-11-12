@@ -170,7 +170,7 @@ void draw_ball ()
 
 void draw_paddle ()
 {
-  mvwprintw(game_window, p.position.y, p.position.x, "====");
+  mvwprintw(game_window, p.position.y, p.position.x, "%.*s", p.width, "====");
 }
 
 float angle; // TODO: why do I have to put these up here to make things not break?
@@ -191,6 +191,10 @@ void move_ball ()
   if (y < 0)
   {
     // collision with top wall
+    if (p.width == 4)
+    {
+      p.width = 2;
+    }
     b.direction.y *= -1;
     y = calc_ball_y();
   }
