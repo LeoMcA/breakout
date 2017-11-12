@@ -139,13 +139,11 @@ void draw_game_window(int port)
   wrefresh(game_window);
 }
 
-int row_color;
 void draw_bricks ()
 {
   for (int row = 0; row < 8; row++)
   {
-    // int row_color; // initializing variable here causes everything to break
-    row_color = (row + 2) / 2;
+    int row_color = (row + 2) / 2;
     for (int col = 0; col < 14; col++)
     {
       if (bricks[col][row])
