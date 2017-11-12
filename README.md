@@ -41,6 +41,10 @@ And run it with:
 
 `./breakout`
 
+The game can be exited by pressing:
+
+<kbd>Ctrl</kbd> + <kbd>C</kbd>
+
 ## Gameplay
 
 Wikipedia has [comprehensive documentation][2] of the original.
