@@ -175,10 +175,6 @@ void draw_paddle ()
   mvwprintw(game_window, p.position.y, p.position.x, "%.*s", p.width, "====");
 }
 
-float rel;
-float angle; // TODO: why do I have to put these up here to make things not break?
-int col;
-int row;
 void move_ball ()
 {
   float x = calc_ball_x();
@@ -216,8 +212,8 @@ void move_ball ()
   if (x > p.position.x - 1 && x < p.position.x + p.width && ceil(y) == p.position.y)
   {
     // collision with paddle
-    rel = (x - p.position.x + 1) / (p.width + 1);
-    angle = -1 * M_PI * (2 + 18 * rel) / 20;
+    float rel = (x - p.position.x + 1) / (p.width + 1);
+    float angle = -1 * M_PI * (2 + 18 * rel) / 20;
     b.direction.x = cosf(angle);
     b.direction.y = sinf(angle);
     x = calc_ball_x();
@@ -227,8 +223,8 @@ void move_ball ()
   if (round(y) >= 4 && round(y) <= 12)
   {
     // potential collision with brick
-    col = round(x) / 4;
-    row = round(y) - 5;
+    int col = round(x) / 4;
+    int row = round(y) - 5;
     if (bricks[col][row])
     {
       // collision with brick
