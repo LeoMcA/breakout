@@ -59,7 +59,9 @@ There are extra rules concerning when the ball speeds up, how many points you ge
 
 ## License
 
-[MIT](https://github.com/LeoMcA/breakout/blob/master/LICENSE)
+Code licensed under the [MIT License](https://github.com/LeoMcA/breakout/blob/master/LICENSE).
+
+Copyright Leo McArdle 2017, unless otherwise noted.
 
 [1]: https://www.gnu.org/software/ncurses/ncurses.html
 [2]: https://en.wikipedia.org/wiki/Breakout_(video_game)#Gameplay
