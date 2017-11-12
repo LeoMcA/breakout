@@ -16,7 +16,7 @@ In practice I put the potentiometer directly on the breakout board, to serve as 
 
 But any method of connecting the potentiometer to the A0 input, using the 5V supply, will work:
 
-![Circuit Diagram](docs/circuit diagram.png?raw=true)
+![Circuit Diagram](https://raw.githubusercontent.com/LeoMcA/breakout/master/docs/circuit%20diagram.png)
 
 ## Game setup
 
