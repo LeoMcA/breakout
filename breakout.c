@@ -213,7 +213,7 @@ void move_ball ()
   {
     // collision with paddle
     float rel = (x - p.position.x + 1) / (p.width + 1);
-    float angle = -1 * M_PI * (2 + 18 * rel) / 20;
+    float angle = -1 * M_PI * (1 + 4 * rel) / 6;
     b.direction.x = cosf(angle);
     b.direction.y = sinf(angle);
     x = calc_ball_x();
