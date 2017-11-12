@@ -4,6 +4,7 @@
 #include <math.h>
 #include "arduino-serial/arduino-serial-lib.h"
 
+#define SERIAL_PORT "/dev/ttyACM0"
 #define X_MAX 56
 #define Y_MAX 44
 
@@ -79,7 +80,7 @@ int main (void)
 
   setup_color();
 
-  int port = serialport_init("/dev/ttyACM0", 9600);
+  int port = serialport_init(SERIAL_PORT, 9600);
 
   while (1)
   {
